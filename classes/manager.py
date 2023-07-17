@@ -1,1 +1,3 @@
-class Manager: 
+from user import User
+class Manager(User): 
+    pass
