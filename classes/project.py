@@ -62,7 +62,7 @@ class Project:
 
 #Test Area
     def __str__(self):
-        return f"|||You have selected: {self.name}|||Description: {self.description}|||Start Date: {self.date_started}|||Manager ID: {self.manager_id}|||Employee ID: {self.employee_id}"
+        return f"|||You have selected: {self.name}|||Description: {self.description}|||Start Date: {self.date_started}|||Manager: {self.manager}|||Employee: {self.employee}"
 
     
 
