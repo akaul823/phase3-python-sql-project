@@ -62,7 +62,7 @@ class User:
     # def id(self, id): 
         
     def __str__(self):
-        return f"{self.name}, {self.email}, {self.phone} {self.password}"
+        return f"\n\n********************\n\nName: {self.name}\n\nEmail: {self.email}\n\nPhone: {self.phone}\n\nPassword: {self.password}\n\n********************\n\n"
         
 
 
