@@ -1,6 +1,8 @@
 
+
 from classes.user import User
 from classes.employee import Employee
+from classes.manager import Manager
 
 ##test user class 
 avi = User("Avi Kaul", "email.email@company.com", "111-222-3333", 'Password1!')
@@ -21,9 +23,13 @@ employee2 = Employee("Mordechai Bronfin", "email.email@company.com", "111-222-33
 
 print(employee1, employee2)
 
-def main():
-    pass
 
+
+###Testing###
+# avi = User("Avi Kaul", "email", "phone")
+# print(avi)
+# project_flatiron = Project("Project Flatiron", "A highly secretive intelligence operation surveilling the productivity of developers in the NYC Metropolitan Area", "May 22, 2023", 1, 1)
+# print(project_flatiron)
 
 
     
