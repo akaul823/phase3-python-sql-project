@@ -2,12 +2,12 @@ class Project:
     
     #every instance of a project will be appended into this list called all
     all = []
-    def __init__(self, name, description, date_started, manager_id, employee_id, id = None):
+    def __init__(self, name, description, date_started, manager, employee, id = None):
         self.name = name
         self.description=description
         self.date_started = date_started
-        self.manager_id = manager_id
-        self.employee_id = employee_id
+        self.manager= manager
+        self.employee = employee
         self.all.append(self)
         self.id = id
 
@@ -41,26 +41,28 @@ class Project:
         self._date_started = date_started
 
     @property
-    def manager_id(self):
-        return self._manager_id
-    @manager_id.setter
-    def manager_id(self, manager_id):
-        if not(type(manager_id)==int) or manager_id < 1:
-            raise Exception("Make sure you enter the manager id correctly")
-        self._manager_id = manager_id
+    def manager(self):
+        return self._manager
+    @manager.setter
+    def manager(self, manager):
+        from manager import Manager
+        if not(type(manager)== Manager):
+            raise Exception("Make sure manager is an instance of manager")
+        self._manager = manager
 
     @property
-    def employee_id(self):
-        return self._employee_id
-    @employee_id.setter
-    def employee_id(self, employee_id):
-        if not(type(employee_id)==int) or employee_id < 1:
-            raise Exception("Make sure you enter the manager id correctly")
-        self._employee_id = employee_id
+    def employee(self):
+        return self._employee
+    @employee.setter
+    def employee(self, employee):
+        from employee import Employee
+        if not(type(employee)== Employee):
+            raise Exception("Make sure employee is an instance of employee")
+        self._employee = employee
 
 #Test Area
     def __str__(self):
-        return f"|||You have selected: {self.name}|||Description: {self.description}|||Start Date: {self.date_started}|||Manager ID: {self.manager_id}|||Employee ID: {self.employee_id}"
+        return f"|||You have selected: {self.name}|||Description: {self.description}|||Start Date: {self.date_started}|||Manager: {self.manager}|||Employee: {self.employee}"
 
     
 
