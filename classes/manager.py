@@ -3,7 +3,10 @@ import sqlite3
 
 DATABASE_URL = "db/app.db"
 class Manager(User): 
-    
+                    # project_id INTEGER,
+                # # FOREIGN KEY (project_id) REFERENCES projects(id),
+                # employee_id INTEGER
+                # # FOREIGN KEY (employee_id) REFERENCES employees(id) 
     #List of managers
     all = []
     #Should I add employee and projects?
@@ -18,13 +21,11 @@ class Manager(User):
                 password text,
                 title text, 
                 tenure integer,
-                is_assigned_project integer            
+                is_assigned_project integer,
+                category text            
                 );
                 """
-                # project_id INTEGER,
-                # # FOREIGN KEY (project_id) REFERENCES projects(id),
-                # employee_id INTEGER
-                # # FOREIGN KEY (employee_id) REFERENCES employees(id) 
+
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         cursor.execute(query)
@@ -41,17 +42,20 @@ class Manager(User):
         # self.employee = employee
         #Inherited User Id?
         Manager.all.append(self)
+    
+    def get_category(self):
+        return "manager"  # Default category
 
     def save(self):
         self.create_table()
         super().save()
         query = """
-                insert into managers(name, email, phone, password, title, tenure, is_assigned_project) values(?,?,?,?, ?, ?, ?);
+                insert into managers(name, email, phone, password, title, tenure, is_assigned_project, category) values(?,?,?,?, ?, ?, ?, ?);
                 """
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         try:
-            cursor.execute(query, (self.name, self.email, self.phone, self.password, self.title, self.tenure, self.is_assigned_project))
+            cursor.execute(query, (self.name, self.email, self.phone, self.password, self.title, self.tenure, self.is_assigned_project, self.get_category()))
             conn.commit()
             print("Manager inserted successfully!")
         except sqlite3.Error as e:
@@ -95,7 +99,7 @@ class Manager(User):
     
     @employee.setter 
     def employee(self, employee):
-        from classes.employee import Employee
+        from employee import Employee
         if type(employee) == Employee: 
             self._employee = employee
         else: 
@@ -107,7 +111,7 @@ class Manager(User):
     
     @project.setter 
     def project(self, project):
-        from classes.project import Project
+        from project import Project
         if type(project) == Project: 
             self._project = project 
         else: 

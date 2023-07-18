@@ -16,7 +16,8 @@ class User:
                 name text, 
                 email text, 
                 phone text,
-                password text
+                password text,
+                category text
                 );
                 """
         conn = sqlite3.connect(DATABASE_URL)
@@ -34,16 +35,19 @@ class User:
         self.all.append(self)
         self.id = id
 
+    def get_category(self):
+        return "user"  # Default category is "user"
+
     def save(self):
         self.create_table()
         query = """
-                insert into users(name, email, phone, password) values(?,?,?,?);
+                insert into users(name, email, phone, password, category) values(?,?,?,?, ?);
                 """
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         try:
             print(self.name, self.email)
-            cursor.execute(query, (self.name, self.email, self.phone, self.password))
+            cursor.execute(query, (self.name, self.email, self.phone, self.password, self.get_category()))
             conn.commit()
             print("User inserted successfully!")
         except sqlite3.Error as e:
