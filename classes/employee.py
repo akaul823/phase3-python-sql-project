@@ -1,7 +1,7 @@
-from user import User
+from classes.user import User
 import sqlite3
 
-DATABASE_URL = "db/app.db"
+DATABASE_URL = "app.db"
 class Employee(User):
     all = []
 
@@ -17,7 +17,7 @@ class Employee(User):
                 title text, 
                 tenure integer,
                 is_assigned_project integer,
-                category text            
+                category text        
                 );
                 """
 
@@ -25,37 +25,99 @@ class Employee(User):
         cursor = conn.cursor()
         cursor.execute(query)
         conn.commit()
+        
+        query = """
+                CREATE TABLE IF NOT EXISTS employees_projects(
+                id INTEGER PRIMARY KEY,
+                employee_id INTEGER,
+                project_id INTEGER,
+                FOREIGN KEY (employee_id) REFERENCES employees(id),
+                FOREIGN KEY (project_id) REFERENCES projects(id)
+                );
+                """
+        cursor.execute(query)
+        conn.commit()
 
         conn.close()
     
-    def __init__(self, name, email, phone, password, title, tenure,  id=None, is_assigned_project=1):
+    def __init__(self, name, email, phone, password, title, tenure,  id=None, is_assigned_project=None):
         super().__init__(name, email, phone, password, id)
         self.title = title 
         self.tenure = tenure 
         # self.manager = manager
         # self.project = project
+        self.projects = []
+        self.id = id
+        
         self.is_assigned_project = is_assigned_project
-        Employee.all.append(self)
+        self.all.append(self)
     
     def get_category(self):
         return "employee"  # Default category
-
-    def save(self):
-        self.create_table()
-        super().save()
-        query = """
-                insert into employees(name, email, phone, password, title, tenure, is_assigned_project, category) values(?,?,?,?, ?, ?, ?, ?);
-                """
+    
+    
+    ## adds a project to db 
+    @classmethod
+    def assign_to_project(cls, employee_id, project_id):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
+        self.projects.append(project_id)
+        print(self.id)
+        print(project_id)
+        
+        query = """ 
+                update employees set is_assigned_project = ? where id = ? ; 
+                """
+        cursor.execute(query, (project_id, self.id))
+        conn.commit()
+        conn.close()
+        self.is_assigned_project = project_id
+        print(self.is_assigned_project)
+
+        
+
+    def save(self):
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+
+        # Check if the users table exists, if not create it
+        query = "SELECT name FROM sqlite_master WHERE type='table' AND name='users';"
+        cursor.execute(query)
+        table_exists = cursor.fetchone()
+
+        if not table_exists:
+            super().create_table()
+
+        # Insert the employee into the users table
+        super().save()
+
+        # Insert the employee into the employees table
+        query = """
+                INSERT INTO employees(name, email, phone, password, title, tenure, is_assigned_project, category)
+                VALUES(?,?,?,?,?,?,?,?);
+                """
+
         try:
             cursor.execute(query, (self.name, self.email, self.phone, self.password, self.title, self.tenure, self.is_assigned_project, self.get_category()))
             conn.commit()
+            self.id = cursor.lastrowid  # Get the auto-generated employee_id
+
+            # Insert associations into the employees_projects table
+            
+            if self.is_assigned_project:
+                if self.projects:
+                    association_query = "INSERT INTO employees_projects (employee_id, project_id) VALUES (?, ?)"
+                for project_id in self.projects:
+                    cursor.execute(association_query, (employee_id, project_id))
+                conn.commit() 
+                
+            
+
             print("Employee inserted successfully!")
         except sqlite3.Error as e:
             print("Error inserting user into database:", str(e))
         finally:
-            conn.close()    
+            conn.close()
         
         
     @property 
@@ -79,19 +141,6 @@ class Employee(User):
             self._tenure = tenure 
         else: 
             raise ValueError('Tenure must be an integer between 1 and 100')
-
-    
-    # @property
-    # def manager(self): 
-    #     return self._manager
-    
-    # @manager.setter 
-    # def manager(self, manager):
-    #     from manager import Manager
-    #     if type(manager) == Manager: 
-    #         self._manager = manager 
-    #     else: 
-    #         raise ValueError('manager must be of type Manager')
     
     @property
     def is_assigned_project(self):
@@ -99,10 +148,12 @@ class Employee(User):
     
     @is_assigned_project.setter
     def is_assigned_project(self, is_assigned_project):
-        if (type(is_assigned_project) == int) and is_assigned_project== 0 or is_assigned_project == 1:
-            self._is_assigned_project = is_assigned_project
-        else:
-            raise Exception("A Manager is either assigned (1) or not assigned (0). ")
+         self._is_assigned_project = is_assigned_project
+         
+        # if (type(is_assigned_project) == int) and is_assigned_project== 0 or is_assigned_project == 1:
+        #     self._is_assigned_project = is_assigned_project
+        # else:
+        #     raise Exception("A Manager is either assigned (1) or not assigned (0). ")
         
     # @property
     # def project(self): 
@@ -116,18 +167,25 @@ class Employee(User):
     #     else: 
     #         raise ValueError('project must be of type Project') 
     
-    ## implement when Project is implemented
+        # @property
+    # def manager(self): 
+    #     return self._manager
+    
+    # @manager.setter 
+    # def manager(self, manager):
+    #     from manager import Manager
+    #     if type(manager) == Manager: 
+    #         self._manager = manager 
+    #     else: 
+    #         raise ValueError('manager must be of type Manager')
+    
+    
         
     def __str__(self):
         return f"\n\n********************\n\nName: {self.name}\n\nEmail: {self.email}\n\nPhone: {self.phone}\n\nPassword: {self.password}\n\nTitle: {self.title}\n\nTenure: {self.tenure}\n\nManager:  \n\nProject: \n\n********************\n\n "
         
     
     
-employee1 = Employee("EMployee","goof.goofy@company.com","123-456-7890","Password!1", "Head Goof", 23)   
-employee1.save()
-print(employee1) 
 
-
-   
     
     
