@@ -1,5 +1,3 @@
-
-
 from classes.user import User
 from classes.employee import Employee
 from classes.manager import Manager
