@@ -1,7 +1,7 @@
-from user import User
+from classes.user import User
 import sqlite3
 
-DATABASE_URL = "db/app.db"
+DATABASE_URL = "app.db"
 class Manager(User): 
                     # project_id INTEGER,
                 # # FOREIGN KEY (project_id) REFERENCES projects(id),
@@ -93,29 +93,29 @@ class Manager(User):
             raise Exception("Tenure must be a valid integer greater than 0.")
          self._tenure = tenure
 
-    @property
-    def employee(self): 
-        return self._employee
+    # @property
+    # def employee(self): 
+    #     return self._employee
     
-    @employee.setter 
-    def employee(self, employee):
-        from employee import Employee
-        if type(employee) == Employee: 
-            self._employee = employee
-        else: 
-            raise ValueError('Must be type manager')
+    # @employee.setter 
+    # def employee(self, employee):
+    #     from employee import Employee
+    #     if type(employee) == Employee: 
+    #         self._employee = employee
+    #     else: 
+    #         raise ValueError('Must be type manager')
 
-    @property
-    def project(self): 
-        return self._project
+    # @property
+    # def project(self): 
+    #     return self._project
     
-    @project.setter 
-    def project(self, project):
-        from project import Project
-        if type(project) == Project: 
-            self._project = project 
-        else: 
-            raise ValueError('project must be of type Project') 
+    # @project.setter 
+    # def project(self, project):
+    #     from project import Project
+    #     if type(project) == Project: 
+    #         self._project = project 
+    #     else: 
+    #         raise ValueError('project must be of type Project') 
 
         
     
@@ -124,7 +124,7 @@ class Manager(User):
     def __str__(self):
         return f"|||You have selected: {self.name}|||Email: {self.email}|||Phone: {self.phone}|||Assigned Project: {self.is_assigned_project}|||Title: {self.title}|||Tenure: {self.tenure}"
 
-goofy = Manager("Goofy the Dog", "goof.goofy@company.com","123-456-7890","Password!1", "Head Goof", 23)
-goofy.save()
-print(goofy)
-# print(goofy.id)
+# goofy = Manager("Goofy the Dog", "goof.goofy@company.com","123-456-7890","Password!1", "Head Goof", 23)
+# goofy.save()
+# print(goofy)
+# # print(goofy.id)

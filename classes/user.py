@@ -1,7 +1,8 @@
 import re #regex for password validation 
 import sqlite3
 
-DATABASE_URL = "db/app.db"
+DATABASE_URL = "app.db"
+
 class User:
     all = []
 
@@ -24,7 +25,6 @@ class User:
         cursor = conn.cursor()
         cursor.execute(query)
         conn.commit()
-
         conn.close()
 
     def __init__(self, name, email, phone, password, id = None):
@@ -113,10 +113,10 @@ class User:
         return f"\n\n********************\n\nName: {self.name}\n\nEmail: {self.email}\n\nPhone: {self.phone}\n\nPassword: {self.password}\n\n********************\n\n"
         
 
-avi = User("Avi Kaul", "email.email@company.com", "111-222-3333", 'Password1!')
-mordechai = User("Mordechai", "email.email@company.com", "111-222-3333", 'Password1!') 
-avi.save()
-mordechai.save()
-print(avi)
-print(mordechai)
+# avi = User("Avi Kaul", "email.email@company.com", "111-222-3333", 'Password1!')
+# mordechai = User("Mordechai", "email.email@company.com", "111-222-3333", 'Password1!') 
+# avi.save()
+# mordechai.save()
+# print(avi)
+# print(mordechai)
 
