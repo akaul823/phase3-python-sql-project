@@ -61,8 +61,8 @@ class Employee(User):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         self.projects.append(project_id)
-        print(self.id)
-        print(project_id)
+        # print(self.id)
+        # print(project_id)
         
         query = """ 
                 update employees set is_assigned_project = ? where id = ? ; 
@@ -71,16 +71,16 @@ class Employee(User):
         conn.commit()
         
         # self.is_assigned_project = project_id
-        print(self.is_assigned_project)
+        # print(self.is_assigned_project)
 
         query = """
                 select * from employees_projects where employee_id = ? and project_id = ?;
                 """
         result = cursor.execute(query, (self.id, self.is_assigned_project )).fetchone()
     
-        print(result)
+        # print(result)
         if (result):
-            print("hi")
+            # print("hi")
             query="""
                     update employees_projects set employee_id = ?, project_id = ? where employee_id = ? and project_id = ?; 
                 """
@@ -137,7 +137,7 @@ class Employee(User):
                 
             
 
-            print("Employee inserted successfully!")
+            # print("Employee inserted successfully!")
         except sqlite3.Error as e:
             print("Error inserting user into database:", str(e))
         finally:

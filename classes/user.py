@@ -46,10 +46,10 @@ class User:
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         try:
-            print(self.name, self.email)
+            # print(self.name, self.email)
             cursor.execute(query, (self.name, self.email, self.phone, self.password, self.get_category()))
             conn.commit()
-            print("User inserted successfully!")
+            # print("User inserted successfully!")
         except sqlite3.Error as e:
             print("Error inserting user into database:", str(e))
         finally:
@@ -115,12 +115,5 @@ class User:
     def __str__(self):
 
         return f"\n\n********************\n\nName: {self.name}\n\nEmail: {self.email}\n\nPhone: {self.phone}\n\nPassword: {self.password}\n\n********************\n\n"
-        
 
-# avi = User("Avi Kaul", "email.email@company.com", "111-222-3333", 'Password1!')
-# mordechai = User("Mordechai", "email.email@company.com", "111-222-3333", 'Password1!') 
-# avi.save()
-# mordechai.save()
-# print(avi)
-# print(mordechai)
 
