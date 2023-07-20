@@ -49,7 +49,7 @@ class Employee(User):
         self.projects = []
         self.id = id
         self.is_assigned_project = is_assigned_project
-        self.all.append(self)
+        Employee.all.append(self)
     
     def get_category(self):
         return "employee"  # Default category
@@ -69,9 +69,9 @@ class Employee(User):
                 """
         cursor.execute(query, (project_id, self.id))
         conn.commit()
-        
+        self.is_assigned_project = project_id
         # self.is_assigned_project = project_id
-        print(self.is_assigned_project)
+        #print(self.is_assigned_project)
 
         query = """
                 select * from employees_projects where employee_id = ? and project_id = ?;

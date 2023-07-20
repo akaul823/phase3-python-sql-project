@@ -53,7 +53,9 @@ class Project:
                 query, (self.name, self.description, self.date_started))
             conn.commit()
             self.id = cursor.lastrowid 
-            print('Project inserted successfully!')
+            print("")
+            print(f'Project {self.name} has been inserted successfully!')
+            print("")
         except sqlite3.Error as e:
             print('Error inserting into database (projects table)', str(e))
         finally:

@@ -176,6 +176,11 @@ class Manager(User):
             raise Exception("Tenure must be a valid integer greater than 0.")
         self._tenure = tenure
 
+    def add_project(name, description, date_started):
+        from classes.project import Project
+        new_project = Project(name, description, date_started)
+        new_project.save()
+
     # @property
     # def employee(self):
     #     return self._employee
