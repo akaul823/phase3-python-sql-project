@@ -57,8 +57,8 @@ class Employee(User):
     
     
     ## adds a project to db 
-    @classmethod
-    def assign_to_project(cls, employee_id, project_id):
+
+    def assign_to_project(self, project_id):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         self.projects.append(project_id)
@@ -70,10 +70,35 @@ class Employee(User):
                 """
         cursor.execute(query, (project_id, self.id))
         conn.commit()
-        conn.close()
-        self.is_assigned_project = project_id
+        
+        # self.is_assigned_project = project_id
         print(self.is_assigned_project)
 
+        query = """
+                select * from employees_projects where employee_id = ? and project_id = ?;
+                """
+        result = cursor.execute(query, (self.id, self.is_assigned_project )).fetchone()
+    
+        print(result)
+        if (result):
+            print("hi")
+            query="""
+                    update employees_projects set employee_id = ?, project_id = ? where employee_id = ? and project_id = ?; 
+                """
+            cursor.execute(query, (self.id, project_id,  self.id, self.is_assigned_project))
+
+        else:
+            query = """
+                    INSERT INTO employees_projects (employee_id, project_id) VALUES (?, ?);
+                """
+            cursor.execute(query, (self.id, project_id))
+        self.is_assigned_project = project_id
+        conn.commit()
+
+
+
+
+        conn.close()
         
 
     def save(self):
@@ -108,7 +133,7 @@ class Employee(User):
                 if self.projects:
                     association_query = "INSERT INTO employees_projects (employee_id, project_id) VALUES (?, ?)"
                 for project_id in self.projects:
-                    cursor.execute(association_query, (employee_id, project_id))
+                    cursor.execute(association_query, (self.id, project_id))
                 conn.commit() 
                 
             

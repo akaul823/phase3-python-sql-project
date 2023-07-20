@@ -13,7 +13,11 @@ employee1 = Employee('MB', 'employee.1@company.com', '123-456-7890', 'Password!1
 employee1.save()
 
 
-employee1.assign_to_project(10)
+employee1.assign_to_project(project1.id)
+employee1.assign_to_project(20)
+employee1.assign_to_project(57)
+
+
     
     
 
