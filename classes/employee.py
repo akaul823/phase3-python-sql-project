@@ -60,7 +60,7 @@ class Employee(User):
     def assign_a_project_to_employee(self, project_id):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
-        self.projects.append(project_id)
+        #self.projects.append(project_id)
         print(self.id)
         print(project_id)
         
@@ -125,7 +125,7 @@ class Employee(User):
             cursor.execute(query, (self.name, self.email, self.phone, self.password, self.title, self.tenure, self.is_assigned_project, self.get_category()))
             conn.commit()
             self.id = cursor.lastrowid  # Get the auto-generated employee_id
-
+            self.all.append(self)
             # Insert associations into the employees_projects table
             
             if self.is_assigned_project:
