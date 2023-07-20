@@ -48,7 +48,6 @@ class Employee(User):
         # self.project = project
         self.projects = []
         self.id = id
-        
         self.is_assigned_project = is_assigned_project
         self.all.append(self)
     
@@ -58,7 +57,7 @@ class Employee(User):
     
     ## adds a project to db 
 
-    def assign_to_project(self, project_id):
+    def assign_a_project_to_employee(self, project_id):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         self.projects.append(project_id)
@@ -151,6 +150,7 @@ class Employee(User):
     
     @title.setter
     def title(self, title): 
+        # self._title = title
         if type(title) == str:
             self._title = title 
         else: 
@@ -162,10 +162,11 @@ class Employee(User):
     
     @tenure.setter
     def tenure(self, tenure):
-        if type(tenure) == int and 1 <= tenure <= 100:
-            self._tenure = tenure 
-        else: 
-            raise ValueError('Tenure must be an integer between 1 and 100')
+        self._tenure = tenure
+        # if type(tenure) == str:
+        #     self._tenure = tenure 
+        # else: 
+        #     raise ValueError('Tenure must be an integer between 1 and 100')
     
     @property
     def is_assigned_project(self):
