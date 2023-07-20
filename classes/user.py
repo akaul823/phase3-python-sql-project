@@ -61,7 +61,8 @@ class User:
     
     @name.setter 
     def name(self, name): 
-        if type(name) == str and 1 < len(name) < 50:
+        # self._name = name
+        if type(name) == str and 1 <= len(name) <= 50:
             self._name = name
         else: 
             raise ValueError('Name must be a string and between 1 and 50 characters')
@@ -72,10 +73,11 @@ class User:
     
     @email.setter 
     def email(self, email):
-        if (isinstance(email, str)) and ('.' in email) and ('@' in email) and ('company.com' in email):
-            self._email = email
-        else:
-            raise ValueError('email must be a string and be in the format of lname.fname@company.com')
+        self._email = email
+        # if (isinstance(email, str)) and ('.' in email) and ('@' in email) and ('company.com' in email):
+        #     self._email = email
+        # else:
+        #     raise ValueError('email must be a string and be in the format of lname.fname@company.com')
         
     @property
     def phone(self): 
@@ -83,6 +85,7 @@ class User:
     
     @phone.setter 
     def phone(self, phone): 
+        # self._phone = phone
         if type(phone) == str and (phone.count('-') == 2) and phone.replace('-', '').isdigit():
             self._phone = phone
         else:
@@ -94,6 +97,7 @@ class User:
     
     @password.setter 
     def password(self, password):
+        # self._password = password
         if type(password) == str and 8 <= len(password) <= 20 and re.search(r"\d", password) and re.search(r"[!@#$%^&*]", password) and re.search(r"[a-z]", password) and re.search(r"[A-Z]", password): 
             self._password = password 
         else:
