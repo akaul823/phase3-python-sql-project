@@ -1,4 +1,5 @@
 from classes.user import User
+from tabulate import tabulate
 
 import sqlite3
 
@@ -172,15 +173,17 @@ class Manager(User):
 
     @tenure.setter
     def tenure(self, tenure):
-        if not (type(tenure) == int) and tenure > 0:
-            raise Exception("Tenure must be a valid integer greater than 0.")
         self._tenure = tenure
+        # if not (type(tenure) == int) and tenure > 0:
+        #     raise Exception("Tenure must be a valid integer greater than 0.")
+        # self._tenure = tenure
 
     def add_project(name, description, date_started):
         from classes.project import Project
         new_project = Project(name, description, date_started)
         new_project.save()
-
+        
+        
     # @property
     # def employee(self):
     #     return self._employee
@@ -215,6 +218,74 @@ class Manager(User):
         from classes.employee import Employee
         new_employee = Employee(name, email, phone, password, title, tenure)
         new_employee.save()
+        
+    def print_all_employees():
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        query = """
+                select * from employees order by id asc; 
+                """
+                
+        cursor.execute(query)
+        result = cursor.fetchall()
+        conn.close()
+        
+        if result: 
+            all_employees_data = []
+            for employee in result: 
+                employee_id, name, email, phone, password, title, tenure, *_ = employee
+                all_employees = [
+                ["Employee ID: ", employee_id],
+                ["Name: ", name],
+                ["Email: ", email],
+                ["Phone: ", phone],
+                ["Title: ", title],
+                ["Tenure: ", tenure]
+                ]
+                all_employees_data.extend(all_employees)
+                all_employees_data.append(['############', '############'])
+            
+            table = tabulate(all_employees_data, headers=["Attribute", "Employee"], tablefmt="grid")
+        else: 
+            table = ('No Employees in the database')
+            
+        print(table, '\n\n')
+        
+    def add_manager(name, email, phone, password, title, tenure): 
+        new_manager = Manager(name, email, phone, password, title, tenure)
+        new_manager.save()
+        
+    def print_all_managers():
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        query = """
+                select * from managers order by id asc; 
+                """
+                
+        cursor.execute(query)
+        result = cursor.fetchall()
+        conn.close()
+        
+        if result: 
+            all_managers_data = []
+            for manager in result: 
+                employee_id, name, email, phone, password, title, tenure, *_ = manager
+                all_managers = [
+                ["Manager ID: ", employee_id],
+                ["Name: ", name],
+                ["Email: ", email],
+                ["Phone: ", phone],
+                ["Title: ", title],
+                ["Tenure: ", tenure]
+                ]
+                all_managers_data.extend(all_managers)
+                all_managers_data.append(['############', '############'])
+            
+            table = tabulate(all_managers_data, headers=["Attribute", "Manager"], tablefmt="grid")
+        else: 
+            table = ('No Managers in the database')
+            
+        print(table, '\n\n')
         
     def __str__(self):
         return f"|||You have selected: {self.name}|||Email: {self.email}|||Phone: {self.phone}|||Assigned Project: {self.is_assigned_project}|||Title: {self.title}|||Tenure: {self.tenure}"
