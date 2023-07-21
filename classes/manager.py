@@ -347,7 +347,6 @@ class Manager(User):
                 print(f"employee with ID {employee_id} not found in the table.")
 
             conn.close()
-            
 
     def update_project_attributes(project_id, new_attributes):
             conn = sqlite3.connect(DATABASE_URL)
@@ -376,6 +375,45 @@ class Manager(User):
                 print(f"project with ID {project_id} not found in the table.")
 
             conn.close()
+            
+    def remove_employee(employee_id): 
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        query = """
+                delete from employees where id = ?; 
+        
+                """
+                
+        cursor.execute(query, (employee_id,))
+        conn.commit()
+        print(f'\n\nThe employee with id {employee_id} has been deleted\n\n')
+        conn.close()
+        
+    def remove_manager(manager_id): 
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        query = """
+                delete from managers where id = ?; 
+        
+                """
+                
+        cursor.execute(query, (manager_id,))
+        conn.commit()
+        print(f'\n\nThe manager with id {manager_id} has been deleted\n\n')
+        conn.close()
+        
+    def remove_project(project_id): 
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        query = """
+                delete from projects where id = ?; 
+        
+                """
+                
+        cursor.execute(query, (project_id,))
+        conn.commit()
+        print(f'\n\nThe project with id {project_id} has been deleted\n\n')
+        conn.close()
         
         
     

@@ -70,7 +70,8 @@ def update_employee_info_main():
 
 
 def remove_employee_main():
-    pass 
+    employee_id = int(input("Enter the ID of the employee you want to delete: "))
+    Manager.remove_employee(employee_id)
   
 ## employee crud functions end 
 
@@ -136,7 +137,8 @@ def update_manager_info_main():
     
 
 def remove_manager_main():
-    pass 
+    manager_id = int(input("Enter the ID of the manager you want to delete: "))
+    Manager.remove_manager(manager_id)
 
 
 ## manager crud functions end 
@@ -234,6 +236,10 @@ def update_project_info_main():
     
 
     Manager.update_project_attributes(project_id, new_attributes)
+    
+def remove_project_main():
+    project_id = int(input("Enter the ID of the project you want to delete: "))
+    Manager.remove_project(project_id)
 
 ## user interface begins    
 def intro(): 
@@ -315,6 +321,14 @@ def main():
                 print(f"\n\nAn error occurred: {e}\n\n")
             options()
             continue_app()
+        elif option == '10':
+            print("\n*****Remove an Employee*****\n\n")
+            try:
+                remove_employee_main()
+            except Exception as e:
+                print(f"\n\nAn error occurred: {e}\n\n")
+            options()
+            continue_app()
         elif option == '11':
             print("\n*****Update Manager Info*****\n\n")
             try:
@@ -323,10 +337,26 @@ def main():
                 print(f"\n\nAn error occurred: {e}\n\n")
             options()
             continue_app()
+        elif option == '12':
+            print("\n*****Remove a Manager*****\n\n")
+            try:
+                remove_manager_main()
+            except Exception as e:
+                print(f"\n\nAn error occurred: {e}\n\n")
+            options()
+            continue_app()
         elif option == '13':
             print("\n*****Update Project Info*****\n\n")
             try:
                 update_project_info_main()
+            except Exception as e:
+                print(f"\n\nAn error occurred: {e}\n\n")
+            options()
+            continue_app()
+        elif option == '14':
+            print("\n*****Remove a Project*****\n\n")
+            try:
+                remove_project_main()
             except Exception as e:
                 print(f"\n\nAn error occurred: {e}\n\n")
             options()
@@ -339,53 +369,6 @@ def main():
             
 main()
 
-
-## user interface end 
-
-##navigation functions 
-
-
-    
-   
-    
-# def manager_assign_project_to_employee_main():
-#     assign_project_emp_attributes = ['employee_id', 'project_id']
-#     employee_id = input('Please enter Employee ID: ')
-#     project_id = input('Please enter Project ID: ')
-#     assign_a_project_to_employee(employee_id, project_id)
-    
-    
-    ## project crud functions triggered by manager end   
-    
-      
- 
-
-
-
-# project1 = Project('Project 1', 'Description 1', '2023-01-01')
-# project1.save()
-
-
-# employee1 = Employee('MB', 'employee.1@company.com', '123-456-7890', 'Password!1', 'Title 1', 2)
-# manager1 = Manager("Goofy the Dog", "goof.goofy@company.com","123-456-7890","Password!1", "Head Goof", 23)
-# employee1.save()
-# manager1.save()
-
-# manager1.assign_a_project_to_manager(project1.id)
-
-# Manager.add_employee('MwweweewewewewB', 'employee.1@company.com', '123-456-7890', 'Password!1', 'Title 1', '2000', 00)
-# Manager.add_employee("Goofy the Dog", "goof.goofy@company.com","123-456-7890","Password!1", "Head Goof", 23)
-
-
-# print(Employee.all[1])
-
-# self, name, email, phone, password, title, tenure,  id=None, is_assigned_project=None
-# manager1.assign_a_project_to_manager(25)
-
-
-# employee1.assign_a_project_to_employee(project1.id)
-# employee1.assign_a_project_to_employee(20)
-# employee1.assign_a_project_to_employee(57)
 
 
     
