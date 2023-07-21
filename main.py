@@ -183,9 +183,9 @@ def manager_assign_project_to_employee_main():
             ["name", name],
             ["project", project_name]
         ]
-        for row in result:
-            name, project_name = row
-            table_data.append([name, project_name])
+        # for row in result:
+        #     name, project_name = row
+        #     table_data.append([name, project_name])
         table = tabulate(table_data, headers=["Employee Name", "Project"], tablefmt="grid")
     else:
         table = "There are no projects assigned"
