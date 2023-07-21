@@ -150,6 +150,11 @@ def print_add_project():
 def manager_assign_project_to_employee_main():
     employee_id = int(input('Please enter Employee ID: '))  # Convert input to int if employee_id is an integer
     project_id = int(input('Please enter Project ID: '))  # Convert input to int if project_id is an integer
+
+    project_instance = None
+    for project in Project.all:
+        if project.id == project_id:
+            project_instance = project
     
     # Find the employee instance based on the provided ID'
     employee_instance = None
@@ -159,7 +164,7 @@ def manager_assign_project_to_employee_main():
 
     if employee_instance:
         employee_instance.assign_a_project_to_employee(project_id)
-        print(f"Project assigned to Employee {employee_instance.name} successfully!")
+        print(f"\n\n Employee ID: {employee_instance.id} - {employee_instance.name} is now working on Project {project_instance.name} with ID: {project_instance.id}\n\n Here is a list of all current projects that employees are working on.\n\n" )
     else:
         print(f"Employee with ID {employee_id} not found.")
 
@@ -169,27 +174,62 @@ def manager_assign_project_to_employee_main():
             INNER JOIN employees_projects ON employees.id = employees_projects.employee_id
             INNER JOIN projects ON employees_projects.project_id = projects.id;
         """
+    
     conn=sqlite3.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
-    #conn.commit()
     conn.close()
 
     if result:
-        name, project_name, *_ = result
-    
-        table_data = [
-            ["name", name],
-            ["project", project_name]
-        ]
-        # for row in result:
-        #     name, project_name = row
-        #     table_data.append([name, project_name])
-        table = tabulate(table_data, headers=["Employee Name", "Project"], tablefmt="grid")
+        headers = ["Employee Name", "Project Name"]
+        table = tabulate(result, headers = headers, tablefmt = "grid")
     else:
         table = "There are no projects assigned"
-    print(table)
+    print(table, "\n\n")
+
+##Assign project to manager
+# def manager_assign_project_to_manager_main():
+#     manager_id = int(input('Please enter Employee ID: '))  # Convert input to int if employee_id is an integer
+#     project_id = int(input('Please enter Project ID: '))  # Convert input to int if project_id is an integer
+
+#     project_instance = None
+#     for project in Project.all:
+#         if project.id == project_id:
+#             project_instance = project
+    
+#     # Find the employee instance based on the provided ID'
+#     employee_instance = None
+#     for employee in Employee.all:
+#         if employee.id == employee_id:
+#             employee_instance = employee
+
+#     if employee_instance:
+#         employee_instance.assign_a_project_to_employee(project_id)
+#         print(f"\n\n Employee ID: {employee_instance.id} - {employee_instance.name} is now working on Project {project_instance.name} with ID: {project_instance.id}\n\n Here is a list of all current projects that employees are working on.\n\n" )
+#     else:
+#         print(f"Employee with ID {employee_id} not found.")
+
+#     query="""
+#             SELECT employees.name, projects.name as project_name
+#             FROM employees
+#             INNER JOIN employees_projects ON employees.id = employees_projects.employee_id
+#             INNER JOIN projects ON employees_projects.project_id = projects.id;
+#         """
+    
+#     conn=sqlite3.connect(DATABASE_URL)
+#     cursor = conn.cursor()
+#     cursor.execute(query)
+#     result = cursor.fetchall()
+#     conn.close()
+
+#     if result:
+#         headers = ["Employee Name", "Project Name"]
+#         table = tabulate(result, headers = headers, tablefmt = "grid")
+#     else:
+#         table = "There are no projects assigned"
+#     print(table, "\n\n")
+
 
 ## user interface begins    
 def intro(): 

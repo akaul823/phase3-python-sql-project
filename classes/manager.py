@@ -163,8 +163,8 @@ class Manager(User):
 
     @title.setter
     def title(self, title):
-        if not (type(title) == str):
-            raise Exception("Please enter a title of string format")
+        # if not (type(title) == str):
+        #     raise Exception("Please enter a title of string format")
         self._title = title
 
     @property

@@ -150,11 +150,11 @@ class Employee(User):
     
     @title.setter
     def title(self, title): 
-        # self._title = title
-        if type(title) == str:
-            self._title = title 
-        else: 
-            raise ValueError('Title must be be a string')
+        self._title = title
+        # if type(title) == str:
+        #     self._title = title 
+        # else: 
+        #     raise ValueError('Title must be be a string')
         
     @property 
     def tenure(self): 
