@@ -67,48 +67,39 @@ class Manager(User):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         self.projects.append(project_id)
-        print(self.id)
-        print(project_id)
+        # print(self.id)
+        # print(project_id)
 
         query = """ 
-                update managers set is_assigned_project = ? where id = ?; 
-            
-        
-        
+                update managers set is_assigned_project = ? where id = ? ; 
                 """
-
         cursor.execute(query, (project_id, self.id))
-        conn.commit
-        print(self.is_assigned_project)
+        conn.commit()
 
-        query = """ 
-        
-                select * from managers_projects where manager_id = ? and project_id = ?; 
-        
-        
+        # self.is_assigned_project = project_id
+        # print(self.is_assigned_project)
+
+        query = """
+                select * from managers_projects where manager_id = ? and project_id = ?;
                 """
+        result = cursor.execute(query, (self.id, self.is_assigned_project)).fetchone()
 
-        result = cursor.execute(
-            query, (self.id, self.is_assigned_project)).fetchone()
-        print(result)
+        # print(result)
+        if result:
+            # print("hi")
+            query = """
+                    update managers_projects set manager_id = ?, project_id = ? where manager_id = ? and project_id = ?; 
+                """
+            cursor.execute(query, (self.id, project_id, self.id, self.is_assigned_project))
 
-        if (result):
-            print('result exists!')
-            query = """ 
-                update managers_projects set manager_id = ?, project_id = ? where manager_id = ? and project_id = ?; 
-            
-                    """
-
-            cursor.execute(query, (self.id, project_id,
-                           self.id, self.is_assigned_project))
         else:
             query = """
                     INSERT INTO managers_projects (manager_id, project_id) VALUES (?, ?);
-                    """
+                """
             cursor.execute(query, (self.id, project_id))
-
         self.is_assigned_project = project_id
         conn.commit()
+
         conn.close()
 
     def save(self):

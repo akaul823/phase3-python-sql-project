@@ -6,7 +6,9 @@ from tabulate import tabulate
 import sqlite3
 DATABASE_URL = 'app.db'
 
-
+avi = User("Avi Kaul", "email.email@company.com", "111-222-3333", 'Password1!')
+# mordechai = User("Mordechai", "email.email@company.com", "111-222-3333", 'Password1!') 
+avi.save()
 ## employee crud functions begin
 
 def manager_add_employee_main():
@@ -183,6 +185,11 @@ def print_all_projects_main():
 def manager_assign_project_to_employee_main():
     employee_id = int(input('Please enter Employee ID: '))  # Convert input to int if employee_id is an integer
     project_id = int(input('Please enter Project ID: '))  # Convert input to int if project_id is an integer
+
+    project_instance = None
+    for project in Project.all:
+        if project.id == project_id:
+            project_instance = project
     
     # Find the employee instance based on the provided ID'
     employee_instance = None
@@ -192,7 +199,7 @@ def manager_assign_project_to_employee_main():
 
     if employee_instance:
         employee_instance.assign_a_project_to_employee(project_id)
-        print(f"Project assigned to Employee {employee_instance.name} successfully!")
+        print(f"\n\n Employee ID: {employee_instance.id} - {employee_instance.name} is now working on Project {project_instance.name} with ID: {project_instance.id}\n\n Here is a list of all current projects that employees are working on.\n\n" )
     else:
         print(f"Employee with ID {employee_id} not found.")
 
@@ -202,27 +209,61 @@ def manager_assign_project_to_employee_main():
             INNER JOIN employees_projects ON employees.id = employees_projects.employee_id
             INNER JOIN projects ON employees_projects.project_id = projects.id;
         """
+    
     conn=sqlite3.connect(DATABASE_URL)
     cursor = conn.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
-    #conn.commit()
     conn.close()
 
     if result:
-        name, project_name, *_ = result
-    
-        table_data = [
-            ["name", name],
-            ["project", project_name]
-        ]
-        for row in result:
-            name, project_name = row
-            table_data.append([name, project_name])
-        table = tabulate(table_data, headers=["Employee Name", "Project"], tablefmt="grid")
+        headers = ["Employee Name", "Project Name"]
+        table = tabulate(result, headers = headers, tablefmt = "grid")
     else:
         table = "There are no projects assigned"
-    print(table)
+    print(table, "\n\n")
+
+#Assign project to manager
+def manager_assign_project_to_manager_main():
+    manager_id = int(input('Please enter Manager ID: '))  # Convert input to int if manager_id is an integer
+    project_id = int(input('Please enter Project ID: '))  # Convert input to int if project_id is an integer
+
+    project_instance = None
+    for project in Project.all:
+        if project.id == project_id:
+            project_instance = project
+    
+    # Find the manager instance based on the provided ID'
+    manager_instance = None
+    for manager in Manager.all:
+        if manager.id == manager_id:
+            manager_instance = manager
+
+    if manager_instance:
+        manager_instance.assign_a_project_to_manager(project_id)
+        print(f"\n\n Manager ID: {manager_instance.id} - {manager_instance.name} is now managing Project {project_instance.name} with ID: {project_instance.id}\n\n Here is a list of all current projects that managers are managing.\n\n" )
+    else:
+        print(f"Manager with ID {manager_id} not found.")
+
+    query="""
+            SELECT managers.name, projects.name as project_name
+            FROM managers
+            INNER JOIN managers_projects ON managers.id = managers_projects.manager_id
+            INNER JOIN projects ON managers_projects.project_id = projects.id;
+        """
+    
+    conn=sqlite3.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    result = cursor.fetchall()
+    conn.close()
+
+    if result:
+        headers = ["Manager Name", "Project Name"]
+        table = tabulate(result, headers = headers, tablefmt = "grid")
+    else:
+        table = "There are no projects assigned"
+    print(table, "\n\n")
     
     
 def update_project_info_main(): 
@@ -243,18 +284,48 @@ def remove_project_main():
 
 ## user interface begins    
 def intro(): 
-    print("\nWelcome to the Project Management App!\n\nHere's what you can do:\n\n")
+    print(f"\nWelcome to the Project Management App!\n\n")
     
 def options():
-    print("Press 1 to add an Employee:\nPress 2 to add a Manager:\nPress 3 to add a Project:\nPress 4 to assign a Manager to a Project:\nPress 5 to assign an Employee to a Project:\nPress 6 to Print all employees:\nPress 7 to Print all managers:\nPress 8 to Print all projects:\nPress 9 to Update Employee Details:\nPress 10 to Remove an Employee:\nPress 11 to Update Manager Details:\nPress 12 to Remove a Manager:\nPress 13 to Update Project Details:\nPress 14 to Remove a Project:\n\nType Exit to Exit:\n\n")
+    print("Press 1 to add an Employee:\nPress 2 to add a Manager:\nPress 3 to add a Project:\nPress 4 to assign a Manager to a Project:\nPress 5 to assign an Employee to a Project:\nPress 6 to Print all employees:\nPress 7 to Print all managers:\nPress 8 to Print all projects:\nPress 9 to Update Employee Details:\nPress 10 to Remove an Employee:\nPress 11 to Update Manager Details:\nPress 12 to Remove a Manager:\nPress 13 to Update Project Details:\nPress 14 to Remove a Project:\nPress 15 to Logout:\n\nType Exit to Exit:\n\n")
 
 def continue_app():
-    print('Enter Exit to Exit or Select an Option Above to Continue\n\n')  
-                 
+    print('Enter Exit to Exit or Select an Option Above to Continue\n\n') 
+    
+def login():
+    
+    user_name = input('Please enter your username: ')
+    password = input('\nPlease enter your password: ')
+    
+    #database validation
+    conn = sqlite3.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    query = """ 
+            select users.id, users.name, users.email, users.phone, users.password from users where users.email == ? and users.password == ?; 
+            """
+    user = cursor.execute(query, (user_name, password,)).fetchone()
+    
+    if user: 
+        print(f'\n\nWelcome {user_name}!\n\nHere is what you can do:\n\n')
+        options()
+    else:
+        print(f'\n\nthe user {user_name} does not exist, please register:')
+        register_choice = input('\n\nWhat you like to register an employee or manager? ')
+        if register_choice == 'employee':
+            manager_add_employee_main()
+            print('\n\nWelcome New User!\n\nPlease Login\n\n')
+            login()
+        elif register_choice == 'manager':
+            manager_add_manager_main()
+            print('\n\nWelcome New User!\n\nPlease Login\n\n')
+            login()
+
 def main():
     intro()
-    options() 
-    while True: 
+    login()
+    continue_app()
+    while True:
+        
         option = input()
         if option.lower() == 'exit': exit()
         elif option == '1':
@@ -277,6 +348,14 @@ def main():
             print("\n*****Please Input new Project Info*****\n\n")
             try:
                 manager_add_projects_to_db_main()
+            except Exception as e:
+                print(f"\n\nAn error occurred: {e}\n\n")
+            options()
+            continue_app()
+        elif option =='4':
+            print("\n*****Assign Manager to a Project*****\n\n")
+            try:
+                manager_assign_project_to_manager_main()
             except Exception as e:
                 print(f"\n\nAn error occurred: {e}\n\n")
             options()
@@ -360,7 +439,14 @@ def main():
             except Exception as e:
                 print(f"\n\nAn error occurred: {e}\n\n")
             options()
-            continue_app()   
+            continue_app()
+        elif option == '15':
+            try:
+                print('\n\nSuccessfully logged out\n\n')
+                intro()
+                login()
+            except Exception as e:
+                print(f"\n\nAn error occurred: {e}\n\n")
         else:
             print(f'\n\n{option} is not a valid option!\nPlease select a valid option from below\n\n')
             options()
