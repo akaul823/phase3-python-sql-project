@@ -4,6 +4,8 @@ from tabulate import tabulate
 import sqlite3
 
 DATABASE_URL = "app.db"
+
+
 class Manager(User):
     # project_id INTEGER,
     # # FOREIGN KEY (project_id) REFERENCES projects(id),
@@ -163,9 +165,10 @@ class Manager(User):
 
     @title.setter
     def title(self, title):
-        if not (type(title) == str):
-            raise Exception("Please enter a title of string format")
         self._title = title
+        # if not (type(title) == str):
+        #     raise Exception("Please enter a title of string format")
+        # self._title = title
 
     @property
     def tenure(self):
@@ -177,6 +180,11 @@ class Manager(User):
         # if not (type(tenure) == int) and tenure > 0:
         #     raise Exception("Tenure must be a valid integer greater than 0.")
         # self._tenure = tenure
+
+    def add_project(name, description, date_started):
+        from classes.project import Project
+        new_project = Project(name, description, date_started)
+        new_project.save()
 
     # @property
     # def employee(self):
@@ -201,88 +209,207 @@ class Manager(User):
     #         self._project = project
     #     else:
     #         raise ValueError('project must be of type Project')
-    
-    
-    
-    
-    
-    #function for manager to add a new employee to db 
-    
+
+    # function for manager to add a new employee to db
+
     def add_employee(name, email, phone, password, title, tenure):
         from classes.employee import Employee
         new_employee = Employee(name, email, phone, password, title, tenure)
         new_employee.save()
-        
+
     def print_all_employees():
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         query = """
                 select * from employees order by id asc; 
                 """
-                
+
         cursor.execute(query)
         result = cursor.fetchall()
         conn.close()
-        
-        if result: 
+
+        if result:
             all_employees_data = []
-            for employee in result: 
+            for employee in result:
                 employee_id, name, email, phone, password, title, tenure, *_ = employee
                 all_employees = [
-                ["Employee ID: ", employee_id],
-                ["Name: ", name],
-                ["Email: ", email],
-                ["Phone: ", phone],
-                ["Title: ", title],
-                ["Tenure: ", tenure]
+                    ["Employee ID: ", employee_id],
+                    ["Name: ", name],
+                    ["Email: ", email],
+                    ["Phone: ", phone],
+                    ["Title: ", title],
+                    ["Tenure: ", tenure]
                 ]
                 all_employees_data.extend(all_employees)
                 all_employees_data.append(['############', '############'])
-            
-            table = tabulate(all_employees_data, headers=["Attribute", "Employee"], tablefmt="grid")
-        else: 
+
+            table = tabulate(all_employees_data, headers=[
+                             "Attribute", "Employee"], tablefmt="grid")
+        else:
             table = ('No Employees in the database')
-            
+
         print(table, '\n\n')
-        
-    def add_manager(name, email, phone, password, title, tenure): 
+
+    def add_manager(name, email, phone, password, title, tenure):
         new_manager = Manager(name, email, phone, password, title, tenure)
         new_manager.save()
-        
+
     def print_all_managers():
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
         query = """
                 select * from managers order by id asc; 
                 """
-                
+
         cursor.execute(query)
         result = cursor.fetchall()
         conn.close()
-        
-        if result: 
+
+        if result:
             all_managers_data = []
-            for manager in result: 
+            for manager in result:
                 employee_id, name, email, phone, password, title, tenure, *_ = manager
                 all_managers = [
-                ["Manager ID: ", employee_id],
-                ["Name: ", name],
-                ["Email: ", email],
-                ["Phone: ", phone],
-                ["Title: ", title],
-                ["Tenure: ", tenure]
+                    ["Manager ID: ", employee_id],
+                    ["Name: ", name],
+                    ["Email: ", email],
+                    ["Phone: ", phone],
+                    ["Title: ", title],
+                    ["Tenure: ", tenure]
                 ]
                 all_managers_data.extend(all_managers)
                 all_managers_data.append(['############', '############'])
-            
-            table = tabulate(all_managers_data, headers=["Attribute", "Manager"], tablefmt="grid")
-        else: 
+
+            table = tabulate(all_managers_data, headers=[
+                             "Attribute", "Manager"], tablefmt="grid")
+        else:
             table = ('No Managers in the database')
-            
+
         print(table, '\n\n')
+
+    def update_manager_attributes(manager_id, new_attributes):
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        query = """ 
+                select * from managers where id = ?; 
         
+                """
+        cursor.execute(query, (manager_id,))
+        exists = cursor.fetchone()
+        if exists:
+            for key, value in new_attributes.items():
+                cursor.execute(
+                    f'UPDATE managers SET {key} = ? WHERE id = ?', (value, manager_id))
+
+            conn.commit()
+            # print(f"Attributes updated for ID {manager_id}:")
+
+            cursor.execute(
+                'SELECT * FROM managers WHERE id = ?', (manager_id,))
+            updated_manager_data = cursor.fetchone()
+            headers = ["ID", "Name", "Email", "Phone", "Password",
+                           "Title", "Tenure", "Is Assigned Project", "Category"]
+            print("\n\n Here's the Manager you updated\n")
+            print(tabulate([updated_manager_data],
+                    headers=headers, tablefmt="grid"))
+            print('\n\n')
+        else:
+            print(f"manager with ID {manager_id} not found in the table.")
+
+        conn.close()
+        
+        
+    def update_employee_attributes(employee_id, new_attributes):
+            conn = sqlite3.connect(DATABASE_URL)
+            cursor = conn.cursor()
+            query = """ 
+                    select * from employees where id = ?; 
+            
+                    """
+            cursor.execute(query, (employee_id,))
+            exists = cursor.fetchone()
+            if exists:
+                for key, value in new_attributes.items():
+                    cursor.execute(
+                        f'UPDATE employees SET {key} = ? WHERE id = ?', (value, employee_id))
+
+                conn.commit()
+                cursor.execute(
+                    'SELECT * FROM employees WHERE id = ?', (employee_id,))
+                updated_employee_data = cursor.fetchone()
+                headers = ["ID", "Name", "Email", "Phone", "Password",
+                            "Title", "Tenure", "Is Assigned Project", "Category"]
+                print("\n\n Here's the Employee you updated\n")
+                print(tabulate([updated_employee_data],
+                        headers=headers, tablefmt="grid"))
+                print('\n\n')
+            else:
+                print(f"employee with ID {employee_id} not found in the table.")
+
+            conn.close()
+            
+
+    def update_project_attributes(project_id, new_attributes):
+            conn = sqlite3.connect(DATABASE_URL)
+            cursor = conn.cursor()
+            query = """ 
+                    select * from projects where id = ?; 
+            
+                    """
+            cursor.execute(query, (project_id,))
+            exists = cursor.fetchone()
+            if exists:
+                for key, value in new_attributes.items():
+                    cursor.execute(
+                        f'UPDATE projects SET {key} = ? WHERE id = ?', (value, project_id))
+
+                conn.commit()
+                cursor.execute(
+                    'SELECT * FROM projects WHERE id = ?', (project_id,))
+                updated_project_data = cursor.fetchone()
+                headers = ["ID", "Name", "Description", "Date Started"]
+                print("\n\n Here's the Project you updated\n")
+                print(tabulate([updated_project_data],
+                        headers = headers, tablefmt="grid"))
+                print('\n\n')
+            else:
+                print(f"project with ID {project_id} not found in the table.")
+
+            conn.close()
+        
+        
+    
+
+    def print_all_projects():
+        conn = sqlite3.connect(DATABASE_URL)
+        cursor = conn.cursor()
+        query = """
+                select * from projects order by id asc; 
+                """
+
+        cursor.execute(query)
+        result = cursor.fetchall()
+        conn.close()
+
+        if result:
+            all_projects_data = []
+            for project in result:
+                project_id, name, description, date_started, *_ = project
+                all_projects = [
+                    ["Project ID: ", project_id],
+                    ["Project Name: ", name],
+                    ["Description: ", description],
+                    ["Date Started: ", date_started],
+                ]
+                all_projects_data.extend(all_projects)
+                all_projects_data.append(['############', '############'])
+
+            table = tabulate(all_projects_data, headers=[
+                             "Attribute", "Project"], tablefmt="grid")
+        else:
+            table = ('No Projects in the database')
+
+        print(table, '\n\n')
+
     def __str__(self):
         return f"|||You have selected: {self.name}|||Email: {self.email}|||Phone: {self.phone}|||Assigned Project: {self.is_assigned_project}|||Title: {self.title}|||Tenure: {self.tenure}"
-
-
-
