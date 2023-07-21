@@ -188,47 +188,47 @@ def manager_assign_project_to_employee_main():
         table = "There are no projects assigned"
     print(table, "\n\n")
 
-##Assign project to manager
-# def manager_assign_project_to_manager_main():
-#     manager_id = int(input('Please enter Employee ID: '))  # Convert input to int if employee_id is an integer
-#     project_id = int(input('Please enter Project ID: '))  # Convert input to int if project_id is an integer
+#Assign project to manager
+def manager_assign_project_to_manager_main():
+    manager_id = int(input('Please enter Manager ID: '))  # Convert input to int if manager_id is an integer
+    project_id = int(input('Please enter Project ID: '))  # Convert input to int if project_id is an integer
 
-#     project_instance = None
-#     for project in Project.all:
-#         if project.id == project_id:
-#             project_instance = project
+    project_instance = None
+    for project in Project.all:
+        if project.id == project_id:
+            project_instance = project
     
-#     # Find the employee instance based on the provided ID'
-#     employee_instance = None
-#     for employee in Employee.all:
-#         if employee.id == employee_id:
-#             employee_instance = employee
+    # Find the manager instance based on the provided ID'
+    manager_instance = None
+    for manager in Manager.all:
+        if manager.id == manager_id:
+            manager_instance = manager
 
-#     if employee_instance:
-#         employee_instance.assign_a_project_to_employee(project_id)
-#         print(f"\n\n Employee ID: {employee_instance.id} - {employee_instance.name} is now working on Project {project_instance.name} with ID: {project_instance.id}\n\n Here is a list of all current projects that employees are working on.\n\n" )
-#     else:
-#         print(f"Employee with ID {employee_id} not found.")
+    if manager_instance:
+        manager_instance.assign_a_project_to_manager(project_id)
+        print(f"\n\n Manager ID: {manager_instance.id} - {manager_instance.name} is now managing Project {project_instance.name} with ID: {project_instance.id}\n\n Here is a list of all current projects that managers are managing.\n\n" )
+    else:
+        print(f"Manager with ID {manager_id} not found.")
 
-#     query="""
-#             SELECT employees.name, projects.name as project_name
-#             FROM employees
-#             INNER JOIN employees_projects ON employees.id = employees_projects.employee_id
-#             INNER JOIN projects ON employees_projects.project_id = projects.id;
-#         """
+    query="""
+            SELECT managers.name, projects.name as project_name
+            FROM managers
+            INNER JOIN managers_projects ON managers.id = managers_projects.manager_id
+            INNER JOIN projects ON managers_projects.project_id = projects.id;
+        """
     
-#     conn=sqlite3.connect(DATABASE_URL)
-#     cursor = conn.cursor()
-#     cursor.execute(query)
-#     result = cursor.fetchall()
-#     conn.close()
+    conn=sqlite3.connect(DATABASE_URL)
+    cursor = conn.cursor()
+    cursor.execute(query)
+    result = cursor.fetchall()
+    conn.close()
 
-#     if result:
-#         headers = ["Employee Name", "Project Name"]
-#         table = tabulate(result, headers = headers, tablefmt = "grid")
-#     else:
-#         table = "There are no projects assigned"
-#     print(table, "\n\n")
+    if result:
+        headers = ["Manager Name", "Project Name"]
+        table = tabulate(result, headers = headers, tablefmt = "grid")
+    else:
+        table = "There are no projects assigned"
+    print(table, "\n\n")
 
 
 ## user interface begins    
@@ -267,6 +267,14 @@ def main():
             print("\n*****Please Input new Project Info*****\n\n")
             try:
                 manager_add_projects_to_db_main()
+            except Exception as e:
+                print(f"\n\nAn error occurred: {e}\n\n")
+            options()
+            continue_app()
+        elif option =='4':
+            print("\n*****Assign Manager to a Project*****\n\n")
+            try:
+                manager_assign_project_to_manager_main()
             except Exception as e:
                 print(f"\n\nAn error occurred: {e}\n\n")
             options()
