@@ -49,7 +49,7 @@ class Employee(User):
         self.projects = []
         self.id = id
         self.is_assigned_project = is_assigned_project
-        Employee.all.append(self)
+        self.all.append(self)
     
     def get_category(self):
         return "employee"  # Default category
@@ -60,27 +60,27 @@ class Employee(User):
     def assign_a_project_to_employee(self, project_id):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
-        #self.projects.append(project_id)
-        print(self.id)
-        print(project_id)
+        self.projects.append(project_id)
+        # print(self.id)
+        # print(project_id)
         
         query = """ 
                 update employees set is_assigned_project = ? where id = ? ; 
                 """
         cursor.execute(query, (project_id, self.id))
         conn.commit()
-        self.is_assigned_project = project_id
+        
         # self.is_assigned_project = project_id
-        #print(self.is_assigned_project)
+        # print(self.is_assigned_project)
 
         query = """
                 select * from employees_projects where employee_id = ? and project_id = ?;
                 """
         result = cursor.execute(query, (self.id, self.is_assigned_project )).fetchone()
     
-        print(result)
+        # print(result)
         if (result):
-            print("hi")
+            # print("hi")
             query="""
                     update employees_projects set employee_id = ?, project_id = ? where employee_id = ? and project_id = ?; 
                 """
@@ -125,7 +125,7 @@ class Employee(User):
             cursor.execute(query, (self.name, self.email, self.phone, self.password, self.title, self.tenure, self.is_assigned_project, self.get_category()))
             conn.commit()
             self.id = cursor.lastrowid  # Get the auto-generated employee_id
-            self.all.append(self)
+
             # Insert associations into the employees_projects table
             
             if self.is_assigned_project:
@@ -137,7 +137,7 @@ class Employee(User):
                 
             
 
-            print("Employee inserted successfully!")
+            # print("Employee inserted successfully!")
         except sqlite3.Error as e:
             print("Error inserting user into database:", str(e))
         finally:
