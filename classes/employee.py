@@ -61,43 +61,26 @@ class Employee(User):
     def assign_a_project_to_employee(self, project_id):
         conn = sqlite3.connect(DATABASE_URL)
         cursor = conn.cursor()
-        self.projects.append(project_id)
-        # print(self.id)
-        # print(project_id)
 
-        query = """ 
-                update employees set is_assigned_project = ? where id = ? ; 
-                """
+        self.projects.append(project_id)
+        query = "UPDATE employees SET is_assigned_project = ? WHERE id = ?;"
         cursor.execute(query, (project_id, self.id))
         conn.commit()
 
-        # self.is_assigned_project = project_id
-        # print(self.is_assigned_project)
+        query = "SELECT * FROM employees_projects WHERE employee_id = ? AND project_id = ?;"
+        result = cursor.execute(query, (self.id, project_id)).fetchone()
 
-        query = """
-                select * from employees_projects where employee_id = ? and project_id = ?;
-                """
-        result = cursor.execute(
-            query, (self.id, self.is_assigned_project)).fetchone()
-
-        # print(result)
-        if (result):
-            # print("hi")
-            query = """
-                    update employees_projects set employee_id = ?, project_id = ? where employee_id = ? and project_id = ?; 
-                """
-            cursor.execute(query, (self.id, project_id,
-                           self.id, self.is_assigned_project))
-
+        if result:
+            query = "UPDATE employees_projects SET employee_id = ?, project_id = ? WHERE employee_id = ? AND project_id = ?;"
+            cursor.execute(query, (self.id, project_id, self.id, project_id))
         else:
-            query = """
-                    INSERT INTO employees_projects (employee_id, project_id) VALUES (?, ?);
-                """
+            query = "INSERT INTO employees_projects (employee_id, project_id) VALUES (?, ?);"
             cursor.execute(query, (self.id, project_id))
+
         self.is_assigned_project = project_id
         conn.commit()
-
         conn.close()
+
 
     def save(self):
         conn = sqlite3.connect(DATABASE_URL)

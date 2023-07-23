@@ -67,8 +67,8 @@ class Project:
 
     @name.setter
     def name(self, name):
-        if not (type(name) == str) and isinstance(name, "name"):
-            raise Exception("Please enter a valid project name")
+        # if not (type(name) == str) and isinstance(name, "name"):
+        #     raise Exception("Please enter a valid project name")
         self._name = name
 
     @property
@@ -77,8 +77,8 @@ class Project:
 
     @description.setter
     def description(self, description):
-        if not (type(description) == str):
-            raise Exception("Please enter a valid project description")
+        # if not (type(description) == str):
+        #     raise Exception("Please enter a valid project description")
         self._description = description
 
     @property
@@ -87,8 +87,8 @@ class Project:
 
     @date_started.setter
     def date_started(self, date_started):
-        if not (type(date_started) == str):
-            raise Exception("Please enter the date as a string")
+        # if not (type(date_started) == str):
+        #     raise Exception("Please enter the date as a string")
         self._date_started = date_started
 
 
