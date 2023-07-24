@@ -190,8 +190,8 @@ def manager_assign_project_to_employee_main():
 
 #Assign project to manager
 def manager_assign_project_to_manager_main():
-    manager_id = int(input('Please enter Manager ID: '))  # Convert input to int if manager_id is an integer
-    project_id = int(input('Please enter Project ID: '))  # Convert input to int if project_id is an integer
+    manager_id = int(input('Please enter Manager ID: '))
+    project_id = int(input('Please enter Project ID: '))  
 
     project_instance = None
     for project in Project.all:
